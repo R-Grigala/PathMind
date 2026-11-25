@@ -84,7 +84,3 @@ docker-compose.yml
 ## Next extensions
 
 Persistent saved mazes, a historical benchmark dashboard, and 3D visualization are natural follow-up modules.
-
-## License
-
-MIT. See [LICENSE](LICENSE).
