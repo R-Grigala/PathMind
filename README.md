@@ -69,7 +69,10 @@ backend/
   main.py                    # FastAPI application and static frontend host
 frontend/
   index.html
-  styles.css
+  static/styles.css
+  static/favicon/favicon.ico
+  static/images/OfDigital_Logo.png
+  static/images/PathMind_Logo.png
   app.js
 tests/
 docs/

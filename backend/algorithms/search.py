@@ -69,9 +69,11 @@ def solve(grid: list[list[int]], start: Position, goal: Position, algorithm: str
             node = parent[node]
         path.append(start)
         path.reverse()
+    path_cost = sum(max(1, grid[r][c]) for r, c in path[1:]) if path else None
     return {
         "path": [list(p) for p in path],
-        "cost": costs.get(goal),
+        "path_length": max(0, len(path) - 1) if path else None,
+        "cost": path_cost,
         "nodes_explored": len(explored),
         "execution_time_ms": round((perf_counter() - began) * 1000, 3),
         "explored": [list(p) for p in explored],
