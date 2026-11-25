@@ -1,216 +1,87 @@
-# 🧠 PathMind
+# PathMind
 
-**AI-Powered Pathfinding & Simulation Platform**
+An interactive pathfinding lab for learning how search algorithms explore a grid. Draw walls and weighted terrain, generate a maze, and visualize or compare A*, Dijkstra, and BFS.
 
-PathMind is an interactive platform for visualizing, analyzing, and comparing pathfinding algorithms in real time. It allows users to explore how algorithms like A*, BFS, and Dijkstra navigate complex environments such as mazes and grid-based systems.
+## Features
 
----
+- Interactive 31 × 19 board with draggable start and goal nodes.
+- Wall, weight, and erase tools; seeded-capable depth-first maze generation through the API.
+- Animated exploration and final path, pause/resume, reset, and speed control.
+- A*, Dijkstra, and BFS comparison on the same board with node, path, cost, and timing metrics.
+- FastAPI endpoints for solving grids and generating mazes, with OpenAPI docs.
+- WebSocket event delivery, dynamic-grid replanning, prioritized multi-agent routes, and a tabular Q-learning API demo.
+- Unit and API tests, Docker, and GitHub Actions CI.
 
-## 📌 Overview
+## Run locally
 
-PathMind is designed to bridge the gap between theoretical algorithms and real-world applications by providing:
+Requires Python 3.10+.
 
-* Interactive maze generation
-* Real-time algorithm visualization
-* Performance benchmarking tools
-* Extensible architecture for advanced AI techniques
-
-This project demonstrates strong skills in **algorithms, backend engineering, system design, and visualization**.
-
----
-
-## 🎯 Key Features
-
-### 🧩 Core Features
-
-* Maze generation (DFS-based)
-* A* pathfinding algorithm
-* Interactive grid (start, goal, walls)
-* Real-time visualization
-* Shortest path detection
-
-### ⚖️ Algorithm Comparison
-
-* A* (heuristic-based)
-* Breadth-First Search (BFS)
-* Dijkstra’s Algorithm
-
-Compare:
-
-* Nodes explored
-* Execution time
-* Path optimality
-
-### 📊 Visualization
-
-* Step-by-step exploration
-* Frontier expansion tracking
-* Final path highlighting
-
----
-
-## 🧠 A* Algorithm
-
-PathMind uses the A* algorithm as a core solver:
-
-```id="2v9u1k"
-f(n) = g(n) + h(n)
+```sh
+python -m venv .venv
+. .venv/bin/activate                 # Windows: .venv\Scripts\activate
+pip install -r requirements-dev.txt
+uvicorn backend.main:app --reload
 ```
 
-Where:
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000). Interactive API docs are available at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
 
-* `g(n)` = cost from start node
-* `h(n)` = heuristic (Manhattan distance)
+## Run with Docker
 
-This ensures efficient and optimal pathfinding in grid-based environments.
-
----
-
-## 🏗️ Architecture
-
-### Backend
-
-* Python (FastAPI)
-* Modular structure:
-
-  * `algorithms/` → A*, BFS, Dijkstra
-  * `maze/` → Maze generation
-  * `services/` → Solver logic
-
-### Frontend
-
-* React.js
-* Interactive grid visualization
-* Control panel for algorithm selection
-
-### Database
-
-* PostgreSQL / MySQL
-* Stores:
-
-  * Maze configurations
-  * Simulation results
-  * Performance metrics
-
-### DevOps
-
-* Docker
-* Nginx
-* CI/CD (GitHub Actions)
-* Cloud/VPS deployment
-
----
-
-## 📂 Project Structure
-
-```id="2dj4zl"
-pathmind/
-│
-├── backend/
-├── frontend/
-├── docker/
-├── tests/
-├── docs/
-└── README.md
+```sh
+docker compose up --build
 ```
 
----
+Then open http://127.0.0.1:8000.
 
-## 🔌 API (Planned)
+## Controls
 
-```id="d7t4v0"
-POST /solve
+- Select an algorithm and edit tool in the left panel.
+- Click or drag on the grid to draw. Drag the green start or gold goal marker to move it.
+- **Visualize path** runs the selected algorithm. **Compare all** evaluates all three on the same board.
+- Keyboard shortcuts: `Space` run/pause, `R` reset animation, `G` generate maze.
+
+## Algorithms and grid rules
+
+Moves are four-directional. In the grid matrix, `0` is regular terrain, `1` is a wall, and values greater than `1` are entry costs. A* uses Manhattan distance; Dijkstra minimizes total terrain cost; BFS treats all traversable cells as equal. Thus, BFS is optimal by number of steps only on unweighted grids.
+
+## API
+
+See [docs/api.md](docs/api.md), or use `/docs` while the server is running. The UI uses the core solver and maze routes; the learning, dynamic, multi-agent, and WebSocket interfaces are available to API clients.
+
+```sh
+curl -X POST http://127.0.0.1:8000/api/solve \
+  -H 'Content-Type: application/json' \
+  -d '{"maze":[[0,1,0],[0,0,0]],"start":[0,0],"goal":[1,2],"algorithm":"astar"}'
 ```
 
-### Request
+## Tests
 
-```json id="cw6z1c"
-{
-  "maze": [[0,1,0],[0,0,0]],
-  "start": [0,0],
-  "goal": [1,2],
-  "algorithm": "astar"
-}
+```sh
+python -m pytest
 ```
 
-### Response
+## Project structure
 
-```json id="g7n1s5"
-{
-  "path": [[0,0],[1,0],[1,1],[1,2]],
-  "cost": 3,
-  "nodes_explored": 12
-}
+```text
+backend/
+  algorithms/search.py       # A*, Dijkstra, BFS
+  maze/generator.py          # randomized DFS maze generation
+  main.py                    # FastAPI application and static frontend host
+frontend/
+  index.html
+  styles.css
+  app.js
+tests/
+docs/
+.github/workflows/ci.yml
+Dockerfile
+docker-compose.yml
 ```
 
----
+## Next extensions
 
-## ⚙️ Installation
+Persistent saved mazes, a historical benchmark dashboard, and 3D visualization are natural follow-up modules.
 
-### Clone repository
+## License
 
-```id="x6mdr1"
-git clone https://github.com/your-username/pathmind.git
-cd pathmind
-```
-
-### Backend setup
-
-```id="i0n6c7"
-cd backend
-pip install -r requirements.txt
-uvicorn main:app --reload
-```
-
-### Frontend setup
-
-```id="u3v6xr"
-cd frontend
-npm install
-npm start
-```
-
----
-
-## 🧪 Testing
-
-```id="m1y9qz"
-pytest
-```
-
----
-
-## 🚀 Future Roadmap
-
-* Reinforcement Learning agent (Q-learning / DQN)
-* Weighted pathfinding
-* Dynamic obstacles
-* Real-time WebSocket updates
-* Multi-agent simulations
-* 3D visualization
-
----
-
-## 👨‍💻 Author
-
-Roma Grigalashvili
-Python | AI | Systems | DevOps
-
----
-
-## 📜 License
-
-MIT License
-
----
-
-## ⭐ Why PathMind?
-
-PathMind is not just a visualization tool — it is a **full-stack AI simulation platform** that showcases:
-
-* Advanced algorithmic thinking
-* Scalable backend architecture
-* Real-time system design
-* Performance optimization
-
----
+MIT. See [LICENSE](LICENSE).
